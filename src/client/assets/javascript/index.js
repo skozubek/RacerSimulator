@@ -75,7 +75,7 @@ async function delay(ms) {
 // This async function controls the flow of the race, add the logic and error handling
 async function handleCreateRace() {
 	// render starting UI
-	renderAt('#race', renderRaceStartView());
+	renderAt('#race', renderRaceStartView(store.track_id, store.player_id));
 
 	// TODO - Get player_id and track_id from the store
 	
@@ -85,6 +85,7 @@ async function handleCreateRace() {
 
 	// The race has been created, now start the countdown
 	// TODO - call the async function runCountdown
+	await runCountdown();
 
 	// TODO - call the async function startRace
 
@@ -116,19 +117,27 @@ async function runCountdown() {
 	try {
 		// wait for the DOM to load
 		await delay(1000);
-		let timer = 3;
 
 		return new Promise(resolve => {
+			let timer = 3;
 			// TODO - use Javascript's built in setInterval method to count down once per second
+			const countDown = setInterval(() => {
+				// run this DOM manipulation to decrement the countdown for the user
+				console.log(timer);
+				document.getElementById('big-numbers').innerHTML = timer;
+				// if the countdown is done, clear the interval, resolve the promise, and return
+				if(timer === 0) {
+					clearInterval(countDown);
+					resolve();
+					return;
+				} else {
+					timer--;
+				}
 
-			// run this DOM manipulation to decrement the countdown for the user
-			document.getElementById('big-numbers').innerHTML = --timer;
-
-			// TODO - if the countdown is done, clear the interval, resolve the promise, and return
-
+			}, 1000);
 		});
-	} catch(error) {
-		console.log(error);
+	} catch(err) {
+		console.log(err);
 	}
 }
 
@@ -195,9 +204,9 @@ function renderRacerCard(racer) {
 	return `
 		<li class="card podracer" id="${id}">
 			<h3>${driver_name}</h3>
-			<p>${top_speed}</p>
-			<p>${acceleration}</p>
-			<p>${handling}</p>
+			<p>TS: ${top_speed}</p>
+			<p>Acc: ${acceleration}</p>
+			<p>H: ${handling}</p>
 		</li>
 	`;
 }
@@ -358,6 +367,12 @@ function createRace(player_id, track_id) {
 
 function getRace(id) {
 	// GET request to `${SERVER}/api/races/${id}`
+	return fetch(`${SERVER}/api/races/${id}`, {
+		method: 'GET',
+		...defaultFetchOpts
+	})
+		.then(res => res.json())
+		.catch(err => console.log(err));
 }
 
 function startRace(id) {
