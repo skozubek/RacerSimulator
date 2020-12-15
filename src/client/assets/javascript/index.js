@@ -172,20 +172,19 @@ function handleAccelerate() {
 // Provided code - do not remove
 
 function renderRacerCars(racers) {
-	console.log(racers);
 	if (!racers.length) {
 		return `
 			<h4>Loading Racers...</4>
 		`;
 	}
 
-	// const results = racers.map(renderRacerCard).join('');
+	const results = racers.map(renderRacerCard).join('');
 
-	// return `
-	// 	<ul id="racers">
-	// 		${reuslts}
-	// 	</ul>
-	// `;
+	return `
+		<ul id="racers">
+			${results}
+		</ul>
+	`;
 }
 
 function renderRacerCard(racer) {
