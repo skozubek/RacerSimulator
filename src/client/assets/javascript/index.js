@@ -160,7 +160,8 @@ function handleSelectTrack(target) {
 	// add class selected to current target
 	target.classList.add('selected');
 
-	// TODO - save the selected track id to the store
+	// Save the selected track id to the store
+	store = Object.assign(store, {track_id: target.id});
 	
 }
 
