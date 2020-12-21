@@ -76,23 +76,29 @@ async function delay(ms) {
 async function handleCreateRace() {
 	// Get player_id and track_id from the store
 	const { track_id, player_id } = store;
-	// render starting UI
-	renderAt('#race', renderRaceStartView(track_id, player_id));
+	if(track_id === undefined || player_id === undefined){
+		alert('select track and racer');
 
-	// invoke the API call to create the race, then save the result
-	const race = await createRace(player_id, track_id);
+	}
+	else{
+		// render starting UI
+		renderAt('#race', renderRaceStartView(track_id, player_id));
 
-	// update the store with the race id
-	store = Object.assign(store, {race_id: race.ID});
+		// invoke the API call to create the race, then save the result
+		const race = await createRace(player_id, track_id);
 
-	// The race has been created, now start the countdown
-	// call the async function runCountdown
-	await runCountdown();
+		// update the store with the race id
+		store = Object.assign(store, {race_id: race.ID});
 
-	// call the async function startRace
-	await startRace(store.race_id);
-	// call the async function runRace
-	await runRace(store.race_id);
+		// The race has been created, now start the countdown
+		// call the async function runCountdown
+		await runCountdown();
+
+		// call the async function startRace
+		await startRace(store.race_id);
+		// call the async function runRace
+		await runRace(store.race_id);
+	}
 }
 function runRace(raceID) {
 	return new Promise((resolve,reject) => {
