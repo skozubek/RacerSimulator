@@ -111,7 +111,7 @@ function runRace(raceID) {
 		const interval = setInterval(() => {
 			getRace(raceID)
 				.then(res => {
-					let status = res.status;
+					const status = res.status;
 					// if the race info status property is "in-progress", update the leaderboard
 					if(status === 'in-progress') {
 						renderAt('#leaderBoard', raceProgress(res.positions));
@@ -187,9 +187,14 @@ function handleSelectTrack(target) {
 }
 
 async function handleAccelerate() {
-	console.log('accelerate button clicked');
-	// Invoke the API call to accelerate
-	await accelerate(store.race_id);
+	try{
+		console.log('accelerate button clicked');
+		// Invoke the API call to accelerate
+		await accelerate(store.race_id);
+	}
+	catch(err) {
+		console.log(err);
+	}
 }
 
 // HTML VIEWS ------------------------------------------------
@@ -305,7 +310,7 @@ function resultsView(positions) {
 
 function raceProgress(positions) {
 
-	let userPlayer = positions.find(e => e.id === parseInt(store.player_id));
+	const userPlayer = positions.find(e => e.id === parseInt(store.player_id));
 	userPlayer.driver_name += ' (you)';
 
 	positions = positions.sort((a, b) => (a.segment > b.segment) ? -1 : 1);
