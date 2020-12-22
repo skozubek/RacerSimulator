@@ -55,7 +55,10 @@ npm install && npm start
 paste and run:
 
 ORIGIN_ALLOWED=http://localhost:3000
-./bin/server_linux # if you are on another platform, there are binaries for each
-First, run your preference of `npm install && npm start` or `yarn && yarn start` at the root of this project. Then you should be able to access http://localhost:3000.
+./bin/server_linux 
+
+# if you are on another platform, there are binaries for each
+
+Run your preference of `npm install && npm start` or `yarn && yarn start` at the root of this project. Then you should be able to access http://localhost:3000.
 
 
