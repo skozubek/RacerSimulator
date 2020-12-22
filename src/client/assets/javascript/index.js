@@ -83,7 +83,7 @@ async function handleCreateRace() {
 		}
 		else{
 		// render starting UI
-			renderAt('#race', renderRaceStartView(track_id, player_id));
+			renderRaceStartView(track_id, player_id);
 
 			// invoke the API call to create the race, then save the result
 			const race = await createRace(player_id, track_id);
@@ -108,14 +108,12 @@ async function handleCreateRace() {
 function runRace(raceID) {
 	return new Promise((resolve,reject) => {
 		// Javascript's built in setInterval method to get race info every 500ms
-
 		const interval = setInterval(() => {
 			getRace(raceID)
 				.then(res => {
 					let status = res.status;
 					// if the race info status property is "in-progress", update the leaderboard
 					if(status === 'in-progress') {
-						//console.log(`Here it is: ${res.positions[0].id}`);
 						renderAt('#leaderBoard', raceProgress(res.positions));
 						// if the race info status property is "finished", clear interval and resolve
 					} else if(status === 'finished') {
@@ -129,16 +127,14 @@ function runRace(raceID) {
 		, 500);
 	});
 }
-
-
 async function runCountdown() {
 	try {
 		// wait for the DOM to load
-		await delay(1000);
+		await delay(500);
 
 		return new Promise(resolve => {
 			let timer = 3;
-			// TODO - use Javascript's built in setInterval method to count down once per second
+			// Javascript's built in setInterval method to count down once per second
 			const countDown = setInterval(() => {
 				// run this DOM manipulation to decrement the countdown for the user
 				console.log(timer);
@@ -166,7 +162,6 @@ function handleSelectPodRacer(target) {
 	if(selected) {
 		selected.classList.remove('selected');
 	}
-
 	// add class selected to current target
 	target.classList.add('selected');
 
@@ -263,24 +258,35 @@ function renderCountdown(count) {
 	`;
 }
 
-function renderRaceStartView(track, racers) {
-	return `
-		<header>
-			<h1>Race: ${track.name}</h1>
-		</header>
-		<main id="two-columns">
-			<section id="leaderBoard">
-				${renderCountdown(3)}
-			</section>
+function renderRaceStartView(track_id, player_id) {
 
-			<section id="accelerate">
-				<h2>Directions</h2>
-				<p>Click the button as fast as you can to make your racer go faster!</p>
-				<button id="gas-peddle">Click Me To Win!</button>
-			</section>
-		</main>
-		<footer></footer>
-	`;
+	getTracks()
+		.then(tracks => {
+			const selectedTrack = tracks.filter(track => track.id === parseInt(track_id));
+			return selectedTrack[0].name;
+		})
+		.then(selectedTrackName => {
+			const html = `
+			<header>
+				<h1>Race on Track: ${selectedTrackName}</h1>
+			</header>
+			<main id="two-columns">
+				<section id="leaderBoard">
+					${renderCountdown(3)}
+				</section>
+
+				<section id="accelerate">
+					<h2>Directions</h2>
+					<p>Click the button as fast as you can to make your racer go faster!</p>
+					<button id="gas-peddle">Click Me To Win!</button>
+				</section>
+			</main>
+			<footer>Udacity Project by Sergi</footer>
+		`;
+
+			renderAt('#race', html);
+		})
+		.catch(err => console.log(err));
 }
 
 function resultsView(positions) {
@@ -313,7 +319,7 @@ function raceProgress(positions) {
 				</td>
 			</tr>
 		`;
-	});
+	}).join('');
 
 	return `
 		<main>
