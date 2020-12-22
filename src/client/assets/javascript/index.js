@@ -74,30 +74,35 @@ async function delay(ms) {
 
 // This async function controls the flow of the race, add the logic and error handling
 async function handleCreateRace() {
+	try{
 	// Get player_id and track_id from the store
-	const { track_id, player_id } = store;
-	if(track_id === undefined || player_id === undefined){
-		alert('select track and racer');
+		const { track_id, player_id } = store;
+		if(track_id === undefined || player_id === undefined){
+			alert('select track and racer');
 
-	}
-	else{
+		}
+		else{
 		// render starting UI
-		renderAt('#race', renderRaceStartView(track_id, player_id));
+			renderAt('#race', renderRaceStartView(track_id, player_id));
 
-		// invoke the API call to create the race, then save the result
-		const race = await createRace(player_id, track_id);
+			// invoke the API call to create the race, then save the result
+			const race = await createRace(player_id, track_id);
 
-		// update the store with the race id
-		store = Object.assign(store, {race_id: race.ID});
+			// update the store with the race id
+			store = Object.assign(store, {race_id: race.ID});
 
-		// The race has been created, now start the countdown
-		// call the async function runCountdown
-		await runCountdown();
+			// The race has been created, now start the countdown
+			// call the async function runCountdown
+			await runCountdown();
 
-		// call the async function startRace
-		await startRace(store.race_id);
-		// call the async function runRace
-		await runRace(store.race_id);
+			// call the async function startRace
+			await startRace(store.race_id);
+			// call the async function runRace
+			await runRace(store.race_id);
+		}
+	}
+	catch(err) {
+		console.log(err);
 	}
 }
 function runRace(raceID) {
@@ -196,7 +201,8 @@ async function handleAccelerate() {
 // Provided code - do not remove
 
 function renderRacerCars(racers) {
-	if (!racers.length) {
+
+	if (!racers) {
 		return `
 			<h4>Loading Racers...</4>
 		`;
@@ -225,7 +231,7 @@ function renderRacerCard(racer) {
 }
 
 function renderTrackCards(tracks) {
-	if (!tracks.length) {
+	if (!tracks) {
 		return `
 			<h4>Loading Tracks...</4>
 		`;
